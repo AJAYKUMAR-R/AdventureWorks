@@ -38,6 +38,17 @@ dotnet ef migrations list
 dotnet ef migrations remove
 
 
+#These two packages need to install to run the scafholding commands like generate the api controller
+dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
+
+#package
+dotnet tool install --global dotnet-aspnet-codegenerator
+
+
+#This is the commad for generating the controller
+dotnet aspnet-codegenerator controller -name MyApiController -api
+
+
 
 
 

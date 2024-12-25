@@ -1,0 +1,27 @@
+# Build Folders
+bin/
+obj/
+
+# User-specific files
+*.user
+*.vs
+.vscode/
+
+# Logs
+*.log
+
+# Packages
+*.nupkg
+*.snupkg
+
+# Visual Studio specific
+.vs/
+
+# Rider specific
+.idea/
+
+# Resharper specific
+*.DotSettings.user
+
+# Other
+*.db
