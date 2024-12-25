@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Adventure.Controllers
+namespace Adventure.Controllers.IdentityCore
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -32,12 +32,14 @@ namespace Adventure.Controllers
             _logger = logger;
         }
 
+
+
         [HttpPost("SingUp")]
         public async Task<IActionResult> Register([FromBody] Register register)
         {
-             if (ModelState.IsValid){
+             if(ModelState.IsValid) {
                 if(await _userManager.FindByEmailAsync(register.Email) == null){
-                     var user = new IdentityUser
+                    var user = new IdentityUser
                     {
                         Email = register.Email,
                         UserName = register.Email
@@ -58,7 +60,7 @@ namespace Adventure.Controllers
                             {
                                 Success = false,
                                 Description = "Registerd Failed",
-                                Data = result.Errors.Select(x => x.Description)
+                                Data = ""
                             }
                         );
                     }
@@ -70,15 +72,53 @@ namespace Adventure.Controllers
                         Data = "user has an account already"
                     });
                 }
-             }else{
+             }else {
                 return new BadRequestObjectResult(new ResponseDetailsStatus()
                             {
                                 Success = false,
                                 Description = "Registerd succesfully",
                                 Data = ModelState
                             });
-             }
+            }
         
+        }
+
+
+        [HttpPost("SignIn")]
+        public async Task<IActionResult> Login([FromBody] Login login){
+            if (ModelState.IsValid)
+            {
+                var result =
+                    await _signInManager.PasswordSignInAsync(login.UserName, login.Password, login.RememberMe, false);
+                if (result.Succeeded)
+                {
+                    return new OkObjectResult(new ResponseDetailsStatus()
+                            {
+                                Success = true,
+                                Description = "Login succesfully",
+                                Data = "Login successfully"
+                            }
+                    );
+                }
+                else
+                {
+                     return new BadRequestObjectResult(new ResponseDetailsStatus()
+                            {
+                                Success = true,
+                                Description = "Login failed",
+                                Data = ""
+                            }
+                    );
+                }
+            }
+
+            return new BadRequestObjectResult(new ResponseDetailsStatus()
+                                {
+                                    Success = true,
+                                    Description = "Login failed",
+                                    Data = ModelState
+                                }
+                            );
         }
     }
 }

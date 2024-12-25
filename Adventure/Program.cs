@@ -20,9 +20,20 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 
 //enabling the service for the controller
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+        options.Password.RequiredLength = 3;
+        options.Password.RequireDigit = true;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Lockout.MaxFailedAccessAttempts = 3;
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+        options.SignIn.RequireConfirmedEmail = false;
+});
 
 var app = builder.Build();
 

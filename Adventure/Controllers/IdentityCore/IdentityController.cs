@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Adventure.Controllers;
+namespace Adventure.Controllers.IdentityCore;
 
 [ApiController]
 [Route("api/[controller]")]
