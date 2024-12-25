@@ -1,7 +1,5 @@
 # Build Folders
-bin/
-obj/
-net6.0/
+
 
 # User-specific files
 *.user
