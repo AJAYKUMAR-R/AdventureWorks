@@ -13,10 +13,4 @@ public class IdentityController : ControllerBase
     {
         _logger = logger;
     }
-
-    [HttpGet("GetData")]
-    public string Get()
-    {
-       return "This the get method";
-    }
 }
