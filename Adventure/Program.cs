@@ -31,7 +31,7 @@ builder.Services.Configure<IdentityOptions>(options =>
         options.Password.RequireDigit = true;
         options.Password.RequireNonAlphanumeric = true;
         options.Lockout.MaxFailedAccessAttempts = 3;
-        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(30);
         options.SignIn.RequireConfirmedEmail = false;
 });
 
