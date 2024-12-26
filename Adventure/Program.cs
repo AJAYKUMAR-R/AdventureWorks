@@ -27,9 +27,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
-        options.Password.RequiredLength = 3;
+        options.Password.RequiredLength = 5;
         options.Password.RequireDigit = true;
-        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireNonAlphanumeric = true;
         options.Lockout.MaxFailedAccessAttempts = 3;
         options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
         options.SignIn.RequireConfirmedEmail = false;
