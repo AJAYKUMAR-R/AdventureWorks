@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Adventure.Controllers.IdentityCore;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class AdminController : ControllerBase
 {
 

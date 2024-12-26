@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Adventure.Controllers.IdentityCore
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
