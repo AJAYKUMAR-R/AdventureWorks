@@ -1,15 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Adventure.DTO;
-using Adventure.Enums;
 using Adventure.Model.Authentcation;
+using Adventure.Models.Authentcation;
+using Adventure.Models.Identity;
 using Adventure.Utlis.Response;
-using Microsoft.AspNetCore.Http;
+using Adventure.Utlis.TokenGenerator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Win32;
 
 namespace Adventure.Controllers.IdentityCore
 {
@@ -18,14 +16,14 @@ namespace Adventure.Controllers.IdentityCore
     public class AuthenticationController : ControllerBase
     {
         private readonly ILogger<AuthenticationController> _logger;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public AuthenticationController(
             ILogger<AuthenticationController> logger,
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager
         )
         {
@@ -52,7 +50,7 @@ namespace Adventure.Controllers.IdentityCore
             }
 
             // Create a new user
-            var user = new IdentityUser
+            var user = new ApplicationUser
             {
                 Email = register.Email,
                 UserName = register.Email
@@ -85,7 +83,7 @@ namespace Adventure.Controllers.IdentityCore
                 }
 
                 //// Add claim to the user
-                var addClaimResult = await _userManager.AddClaimAsync(user, new Claim("CustomClaim", register.Claim.ToString()));
+                var addClaimResult = await _userManager.AddClaimAsync(user, new Claim("Permission", register.Claim.ToString()));
                 if (!addClaimResult.Succeeded)
                 {
                     // Optionally, handle cleanup if claim assignment fails
@@ -101,7 +99,8 @@ namespace Adventure.Controllers.IdentityCore
                 return ResponseHelper.CreateBadRequest("Failed to Register", e.Message);
             }
 
-            return ResponseHelper.CreateOkRequest("Registration successful", "User registered successfully.");
+            //Finally generating token
+            return ResponseHelper.CreateOkRequest("Registerd succesfully", "Registerd successfully");
         }
 
 
@@ -117,12 +116,13 @@ namespace Adventure.Controllers.IdentityCore
                         kvp => kvp.Value?.Errors
                             .Select(e => e.ErrorMessage)
                             .ToList()
-                       ));
+                ));
             }
 
             var signInUser = await _signInManager.
                   PasswordSignInAsync(login.UserName, login.Password, login.RememberMe, true);
 
+            //if the user enter the correct username then only the user got blocked for 5 min
             if (signInUser.IsLockedOut)
             {
                 return ResponseHelper.CreateBadRequest("Login failed", new List<string> { "Too Many attempts the account has been locked for 5 min" });
@@ -133,7 +133,83 @@ namespace Adventure.Controllers.IdentityCore
                return ResponseHelper.CreateBadRequest("Login failed", new List<string> { "userName or Passwrod is Incorrect" });  
             }
 
-            return ResponseHelper.CreateOkRequest("Login succesfully", "Login successfully");
+            try
+            {
+                // Create a new user
+                var user = await _userManager.FindByEmailAsync(login.UserName);
+
+                var roles = await _userManager.GetRolesAsync(user);
+                var claims = await _userManager.GetClaimsAsync(user);
+                var accessToken = TokenHelper.GenerateJwtToken(user, roles, claims);
+                var refreshToken = TokenHelper.GenerateRefreshToken();
+
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenExpiryTime = DateTime.Now.AddSeconds(15);
+
+                await _userManager.UpdateAsync(user);
+
+                //Finally generating token
+                return ResponseHelper.CreateOkRequest("Login succesfully", new
+                {
+                    Token = accessToken,
+                    RefreshToken = refreshToken
+                });
+            }
+            catch(Exception e)
+            {
+                return ResponseHelper.CreateBadRequest("Login failed", new List<string> { "issue in generating token" });
+            }
+
+            
+        }
+
+
+        [HttpPost("RefreshToken")]
+        public async Task<IActionResult> RefreshToken([FromBody] TokenRequest tokenRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ResponseHelper.CreateBadRequest("Validation failed", ModelState.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value?.Errors
+                            .Select(e => e.ErrorMessage)
+                            .ToList()
+                ));
+            }
+
+            try
+            {
+                ClaimsPrincipal? principal = TokenHelper.GetPrincipalFromExpiredToken(tokenRequest.Token);
+
+                if (principal == null)
+                    return Unauthorized();
+
+                var username = principal.Identity?.Name;
+                var user = await _userManager.FindByNameAsync(username);
+                if (user == null || user.RefreshToken != tokenRequest.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+                    return Unauthorized();
+
+                var roles = await _userManager.GetRolesAsync(user);
+                var claims = await _userManager.GetClaimsAsync(user);
+                var newAccessToken = TokenHelper.GenerateJwtToken(user, roles, claims);
+                var newRefreshToken = TokenHelper.GenerateRefreshToken();
+
+                user.RefreshToken = newRefreshToken;
+                user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+
+                await _userManager.UpdateAsync(user);
+
+                return Ok(new
+                {
+                    Token = newAccessToken,
+                    RefreshToken = newRefreshToken
+                });
+
+            }
+            catch(Exception e)
+            {
+                return ResponseHelper.CreateBadRequest("Refresh token failed to generate", new List<string> { e.Message });
+            }
         }
     }
 }

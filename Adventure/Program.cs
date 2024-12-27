@@ -1,6 +1,11 @@
 using Adventure.Data;
+using Adventure.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +17,8 @@ builder.Services.AddDbContext<IdentityCoreDBContext>(options =>
 });
 
 //This is for the user,role config you want to add the extra properties 
-//Ishould inherit to add the property
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+//I should inherit to add the property
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<IdentityCoreDBContext>();
 
 // Add services to the container.
@@ -25,6 +30,26 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//This will help you validate it in the api level for access token
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true, // Ensures the token has not expired
+        ValidateIssuerSigningKey = true, // Validates the signing key
+        ValidIssuer = "YourIssuer",
+        ValidAudience = "YourAudience",
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YourSecretKeyHere"))
+    };
+});
+
 builder.Services.Configure<IdentityOptions>(options =>
 {
         options.Password.RequiredLength = 5;
@@ -34,6 +59,8 @@ builder.Services.Configure<IdentityOptions>(options =>
         options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(30);
         options.SignIn.RequireConfirmedEmail = false;
 });
+
+
 
 var app = builder.Build();
 

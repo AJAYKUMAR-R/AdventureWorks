@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Adventure.Models.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adventure.Data;
 
-public class IdentityCoreDBContext : IdentityDbContext
+//Newly added property should be inherited here.
+public class IdentityCoreDBContext : IdentityDbContext<ApplicationUser>
 {
     public IdentityCoreDBContext()
     {

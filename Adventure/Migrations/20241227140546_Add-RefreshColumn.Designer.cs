@@ -4,6 +4,7 @@ using Adventure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Adventure.Migrations
 {
     [DbContext(typeof(IdentityCoreDBContext))]
-    partial class IdentityCoreDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241227140546_Add-RefreshColumn")]
+    partial class AddRefreshColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
