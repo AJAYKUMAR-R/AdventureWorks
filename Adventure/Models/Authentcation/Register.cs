@@ -1,12 +1,14 @@
 
-﻿using System.ComponentModel.DataAnnotations;
+using Adventure.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Adventure.Model.Authentcation;
 
 public class Register
 {
     [Required]
-    [DataType(DataType.EmailAddress, ErrorMessage = "Email address is missing or invalid.")]
+    [DataType(DataType.EmailAddress)]
+    [EmailAddress(ErrorMessage = "Email address is missing or invalid.")]
     public string? Email { get; set; }
 
     [Required]
@@ -14,9 +16,9 @@ public class Register
     public string? Password { get; set; }
 
     [Required] 
-    public string? Role { get; set; }
+    public Role Role { get; set; }
 
     [Required] 
-    public string? Department { get; set; }
+    public ClaimsPermissions Claim { get; set; }
 
 }

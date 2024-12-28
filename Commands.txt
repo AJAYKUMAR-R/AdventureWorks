@@ -16,6 +16,10 @@ dotnet add package Microsoft.AspNetCore.Identity.EntityFrameworkCore --version 6
  Microsoft.EntityFrameworkCore.SqlServer 
 ,Microsoft.EntityFrameworkCore.Design , Microsoft.EntityFrameworkCore
 
+For bearer token checks :
+dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
+
+
 
 #Migration changes for the EntityFrameworkCore
 
