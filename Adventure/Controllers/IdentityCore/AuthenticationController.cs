@@ -3,18 +3,16 @@ using System.Security.Claims;
 using Adventure.Model.Authentcation;
 using Adventure.Models.Authentcation;
 using Adventure.Models.Identity;
-using Adventure.Utlis.Response;
 using Adventure.Utlis.TokenGenerator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Win32;
 
 namespace Adventure.Controllers.IdentityCore
 {
     [Route("[controller]")]
     [ApiController]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController : IdentityController
     {
         private readonly ILogger<AuthenticationController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -26,7 +24,7 @@ namespace Adventure.Controllers.IdentityCore
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager
-        )
+        ) : base( logger )
         {
             _roleManager = roleManager;
             _userManager = userManager;
@@ -42,7 +40,7 @@ namespace Adventure.Controllers.IdentityCore
             //Code improvements checking failure case and stop it earlier is good way of coding
             if (!ModelState.IsValid)
             {
-                return ResponseHelper.CreateBadRequest("Validation failed", ModelState.ToDictionary(
+                return base.CreateBadRequest("Validation failed", ModelState.ToDictionary(
                         kvp => kvp.Key,
                         kvp => kvp.Value?.Errors
                             .Select(e => e.ErrorMessage)
@@ -63,13 +61,13 @@ namespace Adventure.Controllers.IdentityCore
                 var existingUser = await _userManager.FindByEmailAsync(register.Email);
                 if (existingUser != null)
                 {
-                    return ResponseHelper.CreateBadRequest("User already exists", new List<string> { "An account with this email already exists." });
+                    return base.CreateBadRequest("User already exists", new List<string> { "An account with this email already exists." });
                 }
 
                 var createUserResult = await _userManager.CreateAsync(user, register.Password);
                 if (!createUserResult.Succeeded)
                 {
-                    return ResponseHelper.CreateBadRequest("Registration failed", createUserResult.Errors.Select(error => error.Description).ToList());
+                    return base.CreateBadRequest("Registration failed", createUserResult.Errors.Select(error => error.Description).ToList());
                 }
 
                 
@@ -80,7 +78,7 @@ namespace Adventure.Controllers.IdentityCore
                     // Optionally, handle cleanup if role assignment fails
                     await _userManager.DeleteAsync(user); // Undo user creation if role assignment fails
 
-                    return ResponseHelper.CreateBadRequest("Failed to assign role", addToRoleResult.Errors.Select(error => error.Description).ToList());
+                    return base.CreateBadRequest("Failed to assign role", addToRoleResult.Errors.Select(error => error.Description).ToList());
                 }
 
                 //// Add claim to the user
@@ -89,7 +87,7 @@ namespace Adventure.Controllers.IdentityCore
                 {
                     // Optionally, handle cleanup if claim assignment fails
                     await _userManager.DeleteAsync(user);
-                    return ResponseHelper.CreateBadRequest("Failed to add claim", addToRoleResult.Errors.Select(error => error.Description).ToList());
+                    return base.CreateBadRequest("Failed to add claim", addToRoleResult.Errors.Select(error => error.Description).ToList());
                 }
             }
             catch(Exception e)
@@ -97,11 +95,11 @@ namespace Adventure.Controllers.IdentityCore
                 //if any things fails to create an user like role or claims we will delete the user
                 if(await _userManager.FindByEmailAsync(register.Email) != null)
                     await _userManager.DeleteAsync(user);
-                return ResponseHelper.CreateBadRequest("Failed to Register", e.Message);
+                return base.CreateInternalServerRequest("Failed to Register", e.Message);
             }
 
             //Finally generating token
-            return ResponseHelper.CreateOkRequest("Registerd succesfully", "Registerd successfully");
+            return base.CreateOkRequest("Registerd succesfully", "Registerd successfully");
         }
 
 
@@ -112,7 +110,7 @@ namespace Adventure.Controllers.IdentityCore
             //If the validation failed we are stopping the further execution
             if (!ModelState.IsValid)
             {
-                return ResponseHelper.CreateBadRequest("Validation failed",  ModelState.ToDictionary(
+                return base.CreateBadRequest("Validation failed",  ModelState.ToDictionary(
                         kvp => kvp.Key,
                         kvp => kvp.Value?.Errors
                             .Select(e => e.ErrorMessage)
@@ -126,12 +124,12 @@ namespace Adventure.Controllers.IdentityCore
             //if the user enter the correct username then only the user got blocked for 5 min
             if (signInUser.IsLockedOut)
             {
-                return ResponseHelper.CreateBadRequest("Login failed", new List<string> { "Too Many attempts the account has been locked for 5 min" });
+                return base.CreateBadRequest("Login failed", new List<string> { "Too Many attempts the account has been locked for 5 min" });
             }
 
             if(!signInUser.Succeeded)
             {
-               return ResponseHelper.CreateBadRequest("Login failed", new List<string> { "userName or Passwrod is Incorrect" });  
+               return base.CreateBadRequest("Login failed", new List<string> { "userName or Passwrod is Incorrect" });  
             }
 
             try
@@ -150,7 +148,7 @@ namespace Adventure.Controllers.IdentityCore
                 await _userManager.UpdateAsync(user);
 
                 //Finally generating token
-                return ResponseHelper.CreateOkRequest("Login succesfully", new
+                return base.CreateOkRequest("Login succesfully", new
                 {
                     Token = accessToken,
                     RefreshToken = refreshToken
@@ -158,7 +156,7 @@ namespace Adventure.Controllers.IdentityCore
             }
             catch(Exception e)
             {
-                return ResponseHelper.CreateBadRequest("Login failed", new List<string> { "issue in generating token" });
+                return base.CreateInternalServerRequest("Login failed",  e.Message);
             }
 
             
@@ -169,7 +167,7 @@ namespace Adventure.Controllers.IdentityCore
         {
             if (!ModelState.IsValid)
             {
-                return ResponseHelper.CreateBadRequest("Validation failed", ModelState.ToDictionary(
+                return base.CreateBadRequest("Validation failed", ModelState.ToDictionary(
                         kvp => kvp.Key,
                         kvp => kvp.Value?.Errors
                             .Select(e => e.ErrorMessage)
@@ -198,7 +196,7 @@ namespace Adventure.Controllers.IdentityCore
 
                 await _userManager.UpdateAsync(user);
 
-                return Ok(new
+                return base.CreateOkRequest("Token Generated successfully",new
                 {
                     Token = newAccessToken,
                     RefreshToken = newRefreshToken
@@ -207,16 +205,31 @@ namespace Adventure.Controllers.IdentityCore
             }
             catch(Exception e)
             {
-                return ResponseHelper.CreateBadRequest("Refresh token failed to generate", new List<string> { e.Message });
+                return base.CreateInternalServerRequest("Refresh token failed to generate",  e.Message );
             }
         }
 
 
         [Authorize]
-        [HttpGet("CheckAccessExpiretime")]
-        public string CheckAccessExpiretime()
+        [HttpGet("Logout")]
+        public async Task<IActionResult> Logout()
         {
-            return "Not expired";
+            try
+            {
+                var email = User.Identity.Name;
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                    return Unauthorized();
+
+                user.RefreshToken = null;
+                await _userManager.UpdateAsync(user);
+                return base.CreateOkRequest("Logged out successfully", new { Message = "Logged out successfully" });
+            }
+            catch(Exception e)
+            {
+                return base.CreateInternalServerRequest("Logout Failed due issue",  e.Message );
+            }
+
         }
     }
 }

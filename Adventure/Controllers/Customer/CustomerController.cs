@@ -8,11 +8,11 @@ namespace Adventure.Controllers.Customer
 {
     [Route("[controller]")]
     [ApiController]
-    public class CustomerController : ControllerBase
+    public class CustomerController : IdentityController
     {
         private readonly ILogger<CustomerController> _logger;
 
-        public CustomerController(ILogger<CustomerController> logger)
+        public CustomerController(ILogger<CustomerController> logger) : base(logger) 
         {
             this._logger = logger;
         }

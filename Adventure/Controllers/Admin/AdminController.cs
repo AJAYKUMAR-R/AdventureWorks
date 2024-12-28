@@ -6,12 +6,12 @@ namespace Adventure.Controllers.IdentityCore;
 
 [ApiController]
 [Route("[controller]")]
-public class AdminController : ControllerBase
+public class AdminController : IdentityController
 {
 
     private readonly ILogger<AdminController> _logger;
 
-    public AdminController(ILogger<AdminController> logger)
+    public AdminController(ILogger<AdminController> logger) : base(logger)
     {
         _logger = logger;
     }
