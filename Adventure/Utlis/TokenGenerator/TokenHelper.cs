@@ -25,10 +25,12 @@ namespace Adventure.Utlis.TokenGenerator
 
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YourSecretKeyHere"));
 
+            //This expire time will evaluated in the middleware level - look program.cs
+            //using authorize attribute above the api level
             var token = new JwtSecurityToken(
-                issuer: "YourIssuer",
-                audience: "YourAudience",
-                expires: DateTime.Now.AddMinutes(3),
+                issuer: "http://localhost:5289",
+                audience: "http://localhost:5289",
+                expires: DateTime.UtcNow.AddMinutes(1),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
@@ -49,8 +51,8 @@ namespace Adventure.Utlis.TokenGenerator
             //This will also validate the access token life span
             var tokenValidationParameters = new TokenValidationParameters
             {
-                ValidateAudience = false, // You might need to adjust this
-                ValidateIssuer = false,   // You might need to adjust this
+                ValidateAudience = true, // You might need to adjust this
+                ValidateIssuer = true,   // You might need to adjust this
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YourSecretKeyHere")),
                 ValidateLifetime = true // We want to validate expired tokens here

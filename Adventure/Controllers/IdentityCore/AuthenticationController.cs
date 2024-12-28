@@ -5,6 +5,7 @@ using Adventure.Models.Authentcation;
 using Adventure.Models.Identity;
 using Adventure.Utlis.Response;
 using Adventure.Utlis.TokenGenerator;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Win32;
@@ -104,7 +105,7 @@ namespace Adventure.Controllers.IdentityCore
         }
 
 
-
+        
         [HttpPost("SignIn")]
         public async Task<IActionResult> Login([FromBody] Login login)
         {
@@ -144,7 +145,7 @@ namespace Adventure.Controllers.IdentityCore
                 var refreshToken = TokenHelper.GenerateRefreshToken();
 
                 user.RefreshToken = refreshToken;
-                user.RefreshTokenExpiryTime = DateTime.Now.AddSeconds(15);
+                user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(10);
 
                 await _userManager.UpdateAsync(user);
 
@@ -162,7 +163,6 @@ namespace Adventure.Controllers.IdentityCore
 
             
         }
-
 
         [HttpPost("RefreshToken")]
         public async Task<IActionResult> RefreshToken([FromBody] TokenRequest tokenRequest)
@@ -195,7 +195,6 @@ namespace Adventure.Controllers.IdentityCore
                 var newRefreshToken = TokenHelper.GenerateRefreshToken();
 
                 user.RefreshToken = newRefreshToken;
-                user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
 
                 await _userManager.UpdateAsync(user);
 
@@ -210,6 +209,14 @@ namespace Adventure.Controllers.IdentityCore
             {
                 return ResponseHelper.CreateBadRequest("Refresh token failed to generate", new List<string> { e.Message });
             }
+        }
+
+
+        [Authorize]
+        [HttpGet("CheckAccessExpiretime")]
+        public string CheckAccessExpiretime()
+        {
+            return "Not expired";
         }
     }
 }

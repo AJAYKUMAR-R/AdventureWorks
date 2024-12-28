@@ -40,13 +40,31 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ValidateLifetime = true, // Ensures the token has not expired
-        ValidateIssuerSigningKey = true, // Validates the signing key
-        ValidIssuer = "YourIssuer",
-        ValidAudience = "YourAudience",
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YourSecretKeyHere"))
+       ValidateIssuer = true,
+       ValidateAudience = true,
+       ValidateLifetime = true, // Ensures the token has not expired
+       ValidateIssuerSigningKey = true, // Validates the signing key
+       ClockSkew = TimeSpan.FromSeconds(30), //This sets the time tolerence between the server and client if client is 30 sec ahead it will adjust it
+       ValidIssuer = "http://localhost:5289",
+       ValidAudience = "http://localhost:5289", //this will be update once the front-end has been designed
+       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YourSecretKeyHere"))
+    };
+
+    //This is for loggin the whether the jwt token get failed or not to debug the exception message
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            Console.Clear();
+            Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            Console.Clear();
+            Console.WriteLine($"Token validated: {context.SecurityToken}");
+            return Task.CompletedTask;
+        }
     };
 });
 
@@ -75,11 +93,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
+//Note : if you did not add the authentcation and Authorizaton middleware [Authorize] attribute would not work
+app.UseAuthentication();
 
 // Enable routing
 app.UseRouting();
+
+//This should be placed here to validate the authorization token
+app.UseAuthorization();
+
 
 
 //map the controller 
