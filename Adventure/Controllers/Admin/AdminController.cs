@@ -1,3 +1,5 @@
+using Adventure.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Adventure.Controllers.IdentityCore;
@@ -12,5 +14,12 @@ public class AdminController : ControllerBase
     public AdminController(ILogger<AdminController> logger)
     {
         _logger = logger;
+    }
+
+    [Authorize(Roles = RoleConstants.Admin)]
+    [HttpGet("GetAdmin")]
+    public string GetAdmin()
+    {
+        return "Admin has been authorized";
     }
 }

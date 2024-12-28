@@ -30,7 +30,7 @@ namespace Adventure.Utlis.TokenGenerator
             var token = new JwtSecurityToken(
                 issuer: "http://localhost:5289",
                 audience: "http://localhost:5289",
-                expires: DateTime.UtcNow.AddMinutes(1),
+                expires: DateTime.UtcNow.AddMinutes(10),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
