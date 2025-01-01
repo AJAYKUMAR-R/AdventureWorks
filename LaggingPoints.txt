@@ -1,0 +1,61 @@
+1.How to drop the temptable:
+IF Object_ID('tempdb..#filterresult')
+	drop table tablename
+
+2.How to use fetch next row
+
+select 
+*
+From
+Table
+order by columnName
+offset 5 rows
+fetch next 10 rows only
+ 
+3.when you want to find the way to insert the records into the table below key points are matters
+	1.To have better understanding of relationship between the table look at ER diagram 
+	2.To findout what are the table this current table depand on Ex : Production.Product
+		i.Need to search it in through the SSMS right click on the table you will see in the general section
+			i.object depands on the product 
+			ii.product depands on the object
+		ii.in the second option is need for our case when you want to insert the data into product check the object which our product depand on 
+		iii.Or Go to the table definition and you can look for the foreign key 
+			I.ALTER TABLE [Production].[Product]  WITH CHECK ADD  CONSTRAINT [FK_Product_ProductSubcategory_ProductSubcategoryID] FOREIGN KEY([ProductSubcategoryID])
+													REFERENCES [Production].[ProductSubcategory] ([ProductSubcategoryID])
+			II.FK_Product_ProductSubcategory_ProductSubcategoryID : which says ProductSubcategory table in that table we have product subcategoryID coulmn which is the primary key
+				in that table that is being (REFERENCES [Production].[ProductSubcategory] ([ProductSubcategoryID]) refernced as foreign key in the product table
+			III.Thus when you want to insert the values into the prouduct table you should have the ProductSubcategoryID otherwise you can't
+		iv.what is objects depands on the product : which means when the in the product table the depandent table purchaseOrderDetails must not have the product
+			Data which say it might not been purchased so far . The table would not have table data .
+				I.To findout that go the table definition and look for the foreign key :
+					ALTER TABLE [Purchasing].[PurchaseOrderDetail]  WITH CHECK ADD  CONSTRAINT [FK_PurchaseOrderDetail_Product_ProductID] FOREIGN KEY([ProductID])
+						REFERENCES [Production].[Product] ([ProductID])
+						
+				II.FK_PurchaseOrderDetail_Product_ProductID : Purchase order Details table has the coulmn productID refernced in the production  productID  primary coulmn
+				
+In a simpler term : for an example of EmployeeProfile table 
+			i.If the employee table has an foreign key which is being referenced as primary key in other table like : Employee (EmployeeID)
+				then EmployeeProfile depands on the Employee to get any data into the table. if record not there in the Employee table data won't be inserted EmployeeProfile
+			ii.If the EmployeeProfile has been referenced in some other table as foreign key that table depands on EmployeeProfile for an example : EmployeeDetails (EmployeeProfileID)
+
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
