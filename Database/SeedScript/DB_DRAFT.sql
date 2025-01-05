@@ -211,4 +211,206 @@ SELECT @TotalRecord AS TotalRecords;
 
 GO
 
---SPROC TWO FOR ADDING PRODUCT
+--FUNCTIONLITY : ADDING RECORDS
+
+GO
+
+--Table valued Function
+--To fetch the subcategory details for the UI
+CREATE FUNCTION Production.fn_GetProductSubCategories()
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT 
+        ProductSubCategoryName = Name,
+		ProductSubcategoryID
+    FROM
+        Production.ProductSubcategory
+);
+
+GO
+
+CREATE FUNCTION Production.fn_GetProducModelName()
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT 
+        ProductModelName = Name,
+		ProductModelID
+    FROM
+        Production.ProductModel
+);
+
+GO
+
+GO
+--Table valued Function
+--To fetch the subcategory details for the UI
+--NULL ACCEPTS
+CREATE FUNCTION Production.fn_GetClass()
+RETURNS TABLE
+AS
+RETURN
+(
+   SELECT 1 AS ID,'H' AS [TYPE]
+   UNION ALL
+   SELECT 2,'M'
+   UNION ALL
+   SELECT 3,'L'
+);
+
+
+GO
+--NULL ACCEPTS
+CREATE FUNCTION Production.fn_GetStyle()
+RETURNS TABLE
+AS
+RETURN
+(
+   SELECT 1 AS ID,'U' AS [TYPE]
+   UNION ALL
+   SELECT 2,'M'
+   UNION ALL
+   SELECT 3,'W'
+);
+
+GO
+
+--NULL ACCEPTS
+CREATE FUNCTION Production.fn_GetProductLine()
+RETURNS TABLE
+AS
+RETURN
+(
+   SELECT 1 AS ID,'R' AS [TYPE]
+   UNION ALL
+   SELECT 2,'M'
+   UNION ALL
+   SELECT 3,'T'
+   UNION ALL
+   SELECT 3,'S'
+);
+
+GO
+--To fetch the details of the UnitofWeightMesaure dropdown for the UI
+CREATE FUNCTION Production.fn_GetUnitofMeasure()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT UnitMeasureCode FROM Production.UnitMeasure
+)
+
+
+
+GO
+CREATE PROCEDURE Production.usp_InsertProduct 
+(
+    @Name NVARCHAR(100) ,
+    @ProductNumber NVARCHAR(50) ,
+    @MakeFlag BIT ,
+    @FinishedGoodsFlag BIT ,
+    @Color NVARCHAR(30) NULL,
+    @SafetyStockLevel SMALLINT ,
+    @ReorderPoint SMALLINT ,
+    @StandardCost MONEY ,
+    @ListPrice MONEY ,
+    @Size NVARCHAR(10) NULL,
+    @SizeUnitMeasureCode NCHAR(6) NULL,
+    @WeightUnitMeasureCode NCHAR(6) NULL,
+    @Weight DECIMAL(8,5) NULL,
+    @DaysToManufacture INT ,
+    @ProductLine NCHAR(4) NULL,
+    @Class NCHAR(4) NULL,
+    @Style NCHAR(4) NULL,
+    @ProductSubcategoryID INT NULL,
+    @ProductModelID INT NULL,
+    @SellStartDate DATETIME ,
+    @SellEndDate DATETIME NULL,
+    @DiscontinuedDate DATETIME NULL
+)
+AS
+BEGIN
+	
+    INSERT INTO Production.Product
+    (
+        Name,
+        ProductNumber,
+        MakeFlag,
+        FinishedGoodsFlag,
+        Color,
+        SafetyStockLevel,
+        ReorderPoint,
+        StandardCost,
+        ListPrice,
+        Size,
+        SizeUnitMeasureCode,
+        WeightUnitMeasureCode,
+        [Weight],
+        DaysToManufacture,
+        ProductLine,
+        Class,
+        Style,
+        ProductSubcategoryID,
+        ProductModelID,
+        SellStartDate,
+        SellEndDate,
+        DiscontinuedDate
+    )
+    VALUES
+    (
+        @Name,
+        @ProductNumber,
+        @MakeFlag,
+        @FinishedGoodsFlag,
+        @Color,
+        @SafetyStockLevel,
+        @ReorderPoint,
+        @StandardCost,
+        @ListPrice,
+        @Size,
+        @SizeUnitMeasureCode,
+        @WeightUnitMeasureCode,
+        @Weight,
+        @DaysToManufacture,
+        @ProductLine,
+        @Class,
+        @Style,
+        @ProductSubcategoryID,
+        @ProductModelID,
+        @SellStartDate,
+        @SellEndDate,
+        @DiscontinuedDate
+    );
+END;
+
+
+
+GO
+
+EXEC Production.usp_InsertProduct 
+    @Name = 'Product A',
+    @ProductNumber = 'P12345',
+    @MakeFlag = 1,  -- Assuming 1 means 'True' (for MakeFlag)
+    @FinishedGoodsFlag = 1,  -- Assuming 1 means 'True' (for FinishedGoodsFlag)
+    @Color = 'Red',
+    @SafetyStockLevel = 100,
+    @ReorderPoint = 50,
+    @StandardCost = 20.00,
+    @ListPrice = 40.00,
+    @Size = 'Medium',
+    @SizeUnitMeasureCode = 'KG',
+    @WeightUnitMeasureCode = 'KG',
+    @Weight = 15.5,
+    @DaysToManufacture = 10,
+    @ProductLine = 'A1',
+    @Class = 'H',
+    @Style = 'S1',
+    @ProductSubcategoryID = 1,
+    @ProductModelID = 1,
+    @SellStartDate = '2025-01-01',
+    @SellEndDate = '2026-01-01',
+    @DiscontinuedDate = NULL; -- Optional, leave NULL if no discontinued date
+

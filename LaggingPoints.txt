@@ -37,6 +37,14 @@ In a simpler term : for an example of EmployeeProfile table
 			i.If the employee table has an foreign key which is being referenced as primary key in other table like : Employee (EmployeeID)
 				then EmployeeProfile depands on the Employee to get any data into the table. if record not there in the Employee table data won't be inserted EmployeeProfile
 			ii.If the EmployeeProfile has been referenced in some other table as foreign key that table depands on EmployeeProfile for an example : EmployeeDetails (EmployeeProfileID)
+			
+			
+			
+4.Understanding about cascaded update and cascade delete
+1.if you delete the item in the parent table child table will get update or deleted
+	for an example : ProductModel(productModelID) is the parent table which has an primary key and Product(productModelRefID) is the child table has reference as productModelID
+	when you delete the record in the child table like product table it will delete only the records in the child table
+	but if you delete the record in the parent table whcih has the primary key of prooductModelID then it will try to delete the record in the child table of product
 
 				
 				

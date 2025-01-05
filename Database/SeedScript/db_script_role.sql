@@ -26,3 +26,4 @@ select * from AspNetRoles as ar
 inner join AspNetRoleClaims as arc ON ar.Id = arc.RoleId
 where ar.Id = 2
 
+

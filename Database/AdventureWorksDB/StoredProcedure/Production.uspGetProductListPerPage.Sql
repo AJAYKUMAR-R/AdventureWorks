@@ -1,14 +1,14 @@
 USE [AdventureWorks2019]
 GO
 
-/****** Object:  StoredProcedure [Production].[uppGetProductListPerPage]    Script Date: 01-01-2025 13:24:23 ******/
+/****** Object:  StoredProcedure [Production].[uspGetProductListPerPage]    Script Date: 01-01-2025 13:24:23 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [Production].[uppGetProductListPerPage] (
+CREATE PROCEDURE [Production].[uspGetProductListPerPage] (
 	@ProductName NVARCHAR(500) = NULL,
     @ProductModelName NVARCHAR(300) = NULL,
     @ProductCategoryName NVARCHAR(300) = NULL,
