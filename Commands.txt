@@ -57,3 +57,17 @@ dotnet aspnet-codegenerator controller -name MyApiController -api
 
 
 
+#integrating the EF DB first :
+1.require package are already installed 
+dotnet add package Microsoft.EntityFrameworkCore --version 6.0
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer --version 6.0
+dotnet tool install --global dotnet-ef
+dotnet add package Microsoft.EntityFrameworkCore.Design --version 6.0
+
+
+#run the package manager console.
+2.Scaffold-DbContext "YourConnectionString" Microsoft.EntityFrameworkCore.SqlServer --output-dir Models --context AdventureWorkDBContext'
+
+
+#same alternative for the dotnet cli commands
+dotnet ef dbcontext scaffold "Data Source=(localdb)\MSSQLLocalDB;Database=AdventureWorks2019;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer --output-dir Models --context AdventureWorks
