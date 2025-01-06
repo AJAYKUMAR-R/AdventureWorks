@@ -9,7 +9,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-CREATE FUNCTION [Production].[fn_GetProducModelName]()
+CREATE FUNCTION [Production].[fn_GetProductModelName]()
 RETURNS TABLE
 AS
 RETURN
