@@ -46,7 +46,11 @@ In a simpler term : for an example of EmployeeProfile table
 	when you delete the record in the child table like product table it will delete only the records in the child table
 	but if you delete the record in the parent table whcih has the primary key of prooductModelID then it will try to delete the record in the child table of product
 
-				
+5.we can run the sql script through the commadn for the deployement
+Code is below for window authentication
+sqlcmd -S (localdb)\MSSQLLocalDB -d AdventureWorks2019 -E -i E:\AdventureWorksRepo\AdventureWorks\Database\AdventureWorksDB\Function\Table-Valued\Production.fn_GetClass.sql				
+
+			
 				
 				
 				
