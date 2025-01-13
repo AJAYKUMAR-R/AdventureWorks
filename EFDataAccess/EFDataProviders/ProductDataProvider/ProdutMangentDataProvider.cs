@@ -7,6 +7,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -22,12 +23,32 @@ namespace EFDataAccess.EFDataProviders.ProductDataProvider
         {
             _imageProcessor = imageProcessor;
         }
-        int IProductMangementDataInterface.DeleteProductDetails(int productId)
+         public async Task<bool> DeleteProductDetails(int productId)
         {
-            throw new NotImplementedException();
+            using (var context = new AdventureWorks())
+            {
+                try
+                {
+                    var product = await context.Products.FindAsync(productId);
+                    if (product is not null)
+                    {
+                        throw new Exception("No such as user in the database");
+                    }
+
+                    context.Products.Remove(product);
+
+                    await context.SaveChangesAsync();
+
+                    return true;
+                }
+                catch(Exception ex)
+                {
+                    throw ex;
+                }
+            }
         }
 
-        IEnumerable<ProductModelSet> IProductMangementDataInterface.GetProductListByPage(string productName, string productModelName, string prductCategoryName, bool columnDirection, string sortColumnName, decimal? startPrice, decimal? endPrice, int page, int pageSize, ref int totalRecord)
+        public IEnumerable<ProductModelSet> GetProductListByPage(string productName, string productModelName, string prductCategoryName, bool columnDirection, string sortColumnName, decimal? startPrice, decimal? endPrice, int page, int pageSize, ref int totalRecord)
         {
             //Outparam meter
             var outputParam = new SqlParameter()
@@ -117,14 +138,88 @@ namespace EFDataAccess.EFDataProviders.ProductDataProvider
             
         }
 
-        int IProductMangementDataInterface.InsertProductDetails(Product product)
+        public int InsertProductDetails(Product product)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (var context = new AdventureWorks())
+                {
+                    var parameters = new[]
+                    {
+                        new SqlParameter("@Name", product.Name),
+                        new SqlParameter("@ProductNumber", product.ProductNumber),
+                        new SqlParameter("@MakeFlag", product.MakeFlag),
+                        new SqlParameter("@FinishedGoodsFlag", product.FinishedGoodsFlag),
+                        new SqlParameter("@Color", product.Color),
+                        new SqlParameter("@SafetyStockLevel", product.SafetyStockLevel),
+                        new SqlParameter("@ReorderPoint", product.ReorderPoint),
+                        new SqlParameter("@StandardCost", product.StandardCost),
+                        new SqlParameter("@ListPrice", product.ListPrice),
+                        new SqlParameter("@Size", product.Size),
+                        new SqlParameter("@SizeUnitMeasureCode", product.SizeUnitMeasureCode),
+                        new SqlParameter("@WeightUnitMeasureCode", product.WeightUnitMeasureCode),
+                        new SqlParameter("@Weight", product.Weight),
+                        new SqlParameter("@DaysToManufacture", product.DaysToManufacture),
+                        new SqlParameter("@ProductLine", product.ProductLine),
+                        new SqlParameter("@Class", product.Class),
+                        new SqlParameter("@Style", product.Style),
+                        new SqlParameter("@ProductSubcategoryID", product.ProductSubcategoryId),
+                        new SqlParameter("@ProductModelID", product.ProductModelId),
+                        new SqlParameter("@SellStartDate", product.SellStartDate),
+                        new SqlParameter("@SellEndDate", product.SellEndDate),
+                        new SqlParameter("@DiscontinuedDate", product.DiscontinuedDate)
+                    };
+
+                   return  context.Database.ExecuteSqlRaw("EXEC [Production].[usp_InsertProduct]  @ProductID, @Name, @ProductNumber, @MakeFlag, @FinishedGoodsFlag, @Color, @SafetyStockLevel, @ReorderPoint, @StandardCost, @ListPrice, @Size, @SizeUnitMeasureCode, @WeightUnitMeasureCode, @Weight, @DaysToManufacture, @ProductLine, @Class, @Style, @ProductSubcategoryID, @ProductModelID, @SellStartDate, @SellEndDate, @DiscontinuedDate", parameters);
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
         }
 
         int IProductMangementDataInterface.UpdateProductDetauks(Product product)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (var context = new AdventureWorks())
+                {
+                    var parameters = new[]
+                    {
+                    new SqlParameter("@ProductID", product.ProductId),
+                    new SqlParameter("@Name", product.Name),
+                    new SqlParameter("@ProductNumber", product.ProductNumber),
+                    new SqlParameter("@MakeFlag", product.MakeFlag),
+                    new SqlParameter("@FinishedGoodsFlag", product.FinishedGoodsFlag),
+                    new SqlParameter("@Color", product.Color),
+                    new SqlParameter("@SafetyStockLevel", product.SafetyStockLevel),
+                    new SqlParameter("@ReorderPoint", product.ReorderPoint),
+                    new SqlParameter("@StandardCost", product.StandardCost),
+                    new SqlParameter("@ListPrice", product.ListPrice),
+                    new SqlParameter("@Size", product.Size),
+                    new SqlParameter("@SizeUnitMeasureCode", product.SizeUnitMeasureCode),
+                    new SqlParameter("@WeightUnitMeasureCode", product.WeightUnitMeasureCode),
+                    new SqlParameter("@Weight", product.Weight),
+                    new SqlParameter("@DaysToManufacture", product.DaysToManufacture),
+                    new SqlParameter("@ProductLine", product.ProductLine),
+                    new SqlParameter("@Class", product.Class),
+                    new SqlParameter("@Style", product.Style),
+                    new SqlParameter("@ProductSubcategoryID", product.ProductSubcategoryId),
+                    new SqlParameter("@ProductModelID", product.ProductModelId),
+                    new SqlParameter("@SellStartDate", product.SellStartDate),
+                    new SqlParameter("@SellEndDate", product.SellEndDate),
+                    new SqlParameter("@DiscontinuedDate", product.DiscontinuedDate)
+                };
+
+                    return context.Database.ExecuteSqlRaw("EXEC Production.usp_UpdateProduct @ProductID, @Name, @ProductNumber, @MakeFlag, @FinishedGoodsFlag, @Color, @SafetyStockLevel, @ReorderPoint, @StandardCost, @ListPrice, @Size, @SizeUnitMeasureCode, @WeightUnitMeasureCode, @Weight, @DaysToManufacture, @ProductLine, @Class, @Style, @ProductSubcategoryID, @ProductModelID, @SellStartDate, @SellEndDate, @DiscontinuedDate", parameters);
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
     }
 }

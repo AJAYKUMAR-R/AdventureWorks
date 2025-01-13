@@ -16,7 +16,7 @@ namespace EFDataAccess.EFDataInterface.ProductsDataInterface
 
         public int UpdateProductDetauks(Product product);
 
-        public int DeleteProductDetails(int productId);
+        public Task<bool> DeleteProductDetails(int productId);
 
         public IEnumerable<ProductModelSet> GetProductListByPage(
             string productName,
