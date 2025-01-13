@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Adventure;
+using Adventure.Middleware;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -86,7 +87,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 var app = builder.Build();
 
-
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

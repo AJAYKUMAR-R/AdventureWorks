@@ -1,12 +1,13 @@
 USE [AdventureWorks2019]
 GO
 
-/****** Object:  StoredProcedure [Production].[uspGetProductListPerPage]    Script Date: 01-01-2025 13:24:23 ******/
+/****** Object:  StoredProcedure [Production].[uspGetProductListPerPage]    Script Date: 13-01-2025 21:26:45 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 CREATE PROCEDURE [Production].[uspGetProductListPerPage] (
 	@ProductName NVARCHAR(500) = NULL,
@@ -23,13 +24,6 @@ CREATE PROCEDURE [Production].[uspGetProductListPerPage] (
 AS
 BEGIN
 
-
-
-
-IF @Page = 0 OR @PageSize = 0
-BEGIN
-	 RAISERROR ('Page or Page size can"t be zero', 16, 1);
-END
 
 IF @StartPrice > @EndPrice
 	RAISERROR('Start price should be smaller than the end price',16,1);
@@ -117,9 +111,16 @@ IF OBJECT_ID('tempdb..#RESULTTEMP') IS NOT NULL
 
 SELECT @TotalRecord = COUNT(1) FROM #RESULTTEMP
 
+DECLARE @Offset INT;
 
 
-SET @Page = (@Page - 1) * @PageSize;
+SET @Offset = (@Page - 1) * @PageSize;
+
+IF @PageSize = 0
+BEGIN
+	SET @PageSize = IIF(@TotalRecord = 0,1,@TotalRecord)
+	SET @Offset =0
+END
 
 SELECT 
 *

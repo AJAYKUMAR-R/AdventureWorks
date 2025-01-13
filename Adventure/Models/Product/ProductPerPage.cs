@@ -28,7 +28,7 @@ namespace Adventure.Models.Product
         [Range(1, int.MaxValue, ErrorMessage = "Page must be at least 1.")]
         public int Page { get; set; } = 1; // Default to 1
 
-        [Range(1, int.MaxValue, ErrorMessage = "PageSize must be at least 1.")]
+        [Range(0, int.MaxValue, ErrorMessage = "PageSize must be at least 1.")]
         public int PageSize { get; set; } = 10; // Default to 10
     }
 }

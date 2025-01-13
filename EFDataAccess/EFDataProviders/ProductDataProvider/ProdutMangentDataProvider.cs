@@ -32,21 +32,21 @@ namespace EFDataAccess.EFDataProviders.ProductDataProvider
             //Outparam meter
             var outputParam = new SqlParameter()
             {
-                ParameterName = "@TotalCount",
+                ParameterName = "@TotalRecord",
                 SqlDbType = System.Data.SqlDbType.Int,
                 Direction = System.Data.ParameterDirection.Output
             };
 
             //Definig the parameter
-            var sqlproductName = new SqlParameter("@ProductName", productName);
-            var sqlproductModelName = new SqlParameter("@productModelName", productModelName);
-            var sqlprductCategoryName = new SqlParameter("@ProductCategoryName", prductCategoryName);
-            var sqlcolumnDirection = new SqlParameter("@ColumnDirection", columnDirection);
-            var sqlsortColumnName = new SqlParameter("@SortColumnName", productName);
-            var sqlstartPrice = new SqlParameter("@StartPrice", productName);
-            var sqlendPrice = new SqlParameter("@EndPrice", productName);
-            var sqlpage = new SqlParameter("@Page", productName);
-            var sqlpageSizee = new SqlParameter("@PageSize", productName);
+            var sqlproductName = new SqlParameter("@ProductName", productName) { SqlDbType = System.Data.SqlDbType.NVarChar , IsNullable = true};
+            var sqlproductModelName = new SqlParameter("@productModelName", productModelName) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true }; ;
+            var sqlprductCategoryName = new SqlParameter("@ProductCategoryName", prductCategoryName) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true }; ;
+            var sqlcolumnDirection = new SqlParameter("@ColumnDirection", columnDirection) { SqlDbType = System.Data.SqlDbType.Bit, IsNullable = false }; ;
+            var sqlsortColumnName = new SqlParameter("@SortColumnName", sortColumnName) { SqlDbType = System.Data.SqlDbType.NVarChar, IsNullable = true }; ;
+            var sqlstartPrice = new SqlParameter("@StartPrice", startPrice) { SqlDbType = System.Data.SqlDbType.BigInt, IsNullable = true }; ;
+            var sqlendPrice = new SqlParameter("@EndPrice", endPrice) { SqlDbType = System.Data.SqlDbType.BigInt, IsNullable = true }; ;
+            var sqlpage = new SqlParameter("@Page", page) { SqlDbType = System.Data.SqlDbType.Int, IsNullable = false }; ;
+            var sqlpageSize = new SqlParameter("@PageSize", pageSize) { SqlDbType = System.Data.SqlDbType.Int, IsNullable = false }; ;
 
             // Use raw ADO.NET to execute the stored procedure
             var resultList = new List<ProductModelSet>();
@@ -55,18 +55,25 @@ namespace EFDataAccess.EFDataProviders.ProductDataProvider
             {
                 using (var command = context.Database.GetDbConnection().CreateCommand())
                 {
+                    command.CommandText = "Production.uspGetProductListPerPage";
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+
                     command.Parameters.Add(sqlproductName);
                     command.Parameters.Add(sqlproductModelName);
-                    command.Parameters.Add(prductCategoryName);
-                    command.Parameters.Add(columnDirection);
+                    command.Parameters.Add(sqlprductCategoryName);
+                    command.Parameters.Add(sqlcolumnDirection);
                     command.Parameters.Add(sqlsortColumnName);
                     command.Parameters.Add(sqlstartPrice);
                     command.Parameters.Add(sqlendPrice);
                     command.Parameters.Add(sqlpage);
-                    command.Parameters.Add(sqlpageSizee);
+                    command.Parameters.Add(sqlpageSize);
+
+                    //Adding the output parameter
+                    command.Parameters.Add(outputParam);
 
                     // Open the connection if it's not already open
-                    if (command.Connection.State != System.Data.ConnectionState.Open)
+                    if (command != null && command?.Connection?.State != System.Data.ConnectionState.Open)
                     {
                         command.Connection.Open();
                     }

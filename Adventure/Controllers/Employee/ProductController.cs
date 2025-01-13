@@ -5,6 +5,7 @@ using EFDataAccess.EFDataInterface.ProductsDataInterface;
 using EFDataAccess.EFDataProviders.ProductDataProvider;
 using Adventure.Models.Product;
 using EFDataAccess.EFModelSet.ProductsManagement;
+using EFDataAccess.EFBusinessInterface.ProductBusinessInterface;
 
 namespace Adventure.Controllers.Employee
 {
@@ -13,16 +14,16 @@ namespace Adventure.Controllers.Employee
     public class ProductController : IdentityController
     {
         private readonly ILogger<ProductController> _logger;
-        private readonly IProductMangementDataInterface _productMangement;
+        private readonly IProductBuissness _productMangement;
 
-        public ProductController(ILogger<ProductController> logger, IProductMangementDataInterface productMangement) : base (logger) 
+        public ProductController(ILogger<ProductController> logger, IProductBuissness productMangement) : base (logger) 
         {
             this._logger = logger;
             this._productMangement = productMangement;
         }
 
         [HttpPost("GetProductPerPage")]
-        public async Task<IActionResult> GetProudctList([FromBody] ProductPerPage productPerPage)
+        public IActionResult GetProudctList([FromBody] ProductPerPage productPerPage)
         {
             if (!ModelState.IsValid)
             {
@@ -42,7 +43,7 @@ namespace Adventure.Controllers.Employee
                totalRecord = 0;
                 try
                 {
-                     pageList = _productMangement.GetProductListByPage(productPerPage.ProductName,
+                     pageList = _productMangement.GetPaginatedProductsAsync(productPerPage.ProductName,
                         productPerPage.ProductModelName,productPerPage.ProductCategoryName,productPerPage.ColumnDirection,
                         productPerPage.SortColumnName,productPerPage.StartPrice
                         ,productPerPage.EndPrice,productPerPage.Page,productPerPage.PageSize, ref totalRecord
@@ -54,7 +55,7 @@ namespace Adventure.Controllers.Employee
                 }
             }
 
-            return base.CreateOkRequest("Login succesfully", new
+            return base.CreateOkRequest("Pagination Data Successfully", new
             {
                 Changes = pageList,
                 TotalRecord = totalRecord

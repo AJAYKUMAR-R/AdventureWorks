@@ -17,7 +17,7 @@ public class AdminController : IdentityController
     }
 
     [Authorize(Roles = RoleConstants.Admin)]
-    [HttpGet("GetAdmin")]
+    [HttpGet("GetAdminDetails")]
     public string GetAdmin()
     {
         return "Admin has been authorized";

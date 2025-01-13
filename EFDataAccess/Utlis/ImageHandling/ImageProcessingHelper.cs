@@ -14,7 +14,7 @@ namespace EFDataAccess.Utlis.ImageHandling
         {
             long length = reader.GetBytes(index, 0, null, 0, 0); // First, get the length of the data
             byte[] buffer = new byte[length];                // Allocate buffer based on the actual length
-            long bytesRead = reader.GetBytes(11, 0, buffer, 0, buffer.Length);
+            long bytesRead = reader.GetBytes(index, 0, buffer, 0, buffer.Length);
 
             if (bytesRead > 0)
             {

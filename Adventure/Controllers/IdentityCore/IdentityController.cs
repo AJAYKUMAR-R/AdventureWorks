@@ -17,7 +17,8 @@ public class IdentityController : ControllerBase
 
 
     // Helper method for creating bad request responses
-    public IActionResult CreateBadRequest(string description, object data)
+    //changing it to the protected so it would not consider it as HTTP method consider it as functional method
+    protected IActionResult CreateBadRequest(string description, object data)
     {
         return new BadRequestObjectResult(new ResponseDetailsStatus
         {
@@ -27,7 +28,7 @@ public class IdentityController : ControllerBase
         });
     }
 
-    public  IActionResult CreateOkRequest(string description, object data)
+    protected IActionResult CreateOkRequest(string description, object data)
     {
         return new OkObjectResult(new ResponseDetailsStatus
         {
@@ -37,7 +38,7 @@ public class IdentityController : ControllerBase
         });
     }
 
-    public  IActionResult CreateInternalServerRequest(string description, string data)
+    protected IActionResult CreateInternalServerRequest(string description, string data)
     {
         return StatusCode(500, new ProblemDetails
         {
