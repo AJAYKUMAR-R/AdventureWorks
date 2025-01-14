@@ -3,13 +3,7 @@ using EFDataAccess.EFDataInterface.ProductsDataInterface;
 using EFDataAccess.EFModelSet.ProductsManagement;
 using EFDataAccess.Entities;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace EFDataAccess.EFBusinessLogic.ProductBusinessLogic
 {
@@ -22,9 +16,17 @@ namespace EFDataAccess.EFBusinessLogic.ProductBusinessLogic
             this._prodcutDataProvider = productDataProvider;
             this._logger = logger;
         }
-        public int AddProductDetails(Product product)
+        public void AddProductDetails(Product product)
         {
-            throw new NotImplementedException();
+            if (product == null)
+                throw new ArgumentNullException(nameof(product), "Product cannot be null.");
+
+            var affectedRow = this._prodcutDataProvider.InsertProductDetails(product);
+
+            if(affectedRow == 0)
+            {
+                throw new InvalidOperationException("Product couldn't be updated");
+            }
         }
 
         IEnumerable<ProductModelSet> IProductBuissness.GetPaginatedProductsAsync(string productName, string productModelName, string prductCategoryName, bool columnDirection, string sortColumnName, decimal? startPrice, decimal? endPrice, int page, int pageSize, ref int totalRecord)
@@ -56,14 +58,26 @@ namespace EFDataAccess.EFBusinessLogic.ProductBusinessLogic
             return pageList;
         }
 
-        public int RemoveProduct(int productId)
+        public async void RemoveProduct(int productId)
         {
-            throw new NotImplementedException();
+            if (productId == 0)
+                throw new ArgumentNullException(nameof(productId), "ProductID cann't be there.");
+
+            var affectedRows = await _prodcutDataProvider.DeleteProductDetails(productId);
+
+            if (affectedRows == false)
+                throw new InvalidOperationException($"No product found with ID {productId} to delete.");
         }
 
-        public int UpdateProduct(Product product)
+        public void UpdateProduct(Product product)
         {
-            throw new NotImplementedException();
+            if (product == null)
+                throw new ArgumentNullException(nameof(product), "Product cannot be null.");
+
+            var affectedRows = _prodcutDataProvider.UpdateProductDetauks(product);
+
+            if (affectedRows == 0)
+                throw new InvalidOperationException($"No product found with ID {product.ProductId} to update.");
         }
 
     }

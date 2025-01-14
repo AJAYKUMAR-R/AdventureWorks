@@ -1,11 +1,12 @@
 ﻿using Adventure.Controllers.IdentityCore;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using EFDataAccess.EFDataInterface.ProductsDataInterface;
-using EFDataAccess.EFDataProviders.ProductDataProvider;
 using Adventure.Models.Product;
 using EFDataAccess.EFModelSet.ProductsManagement;
 using EFDataAccess.EFBusinessInterface.ProductBusinessInterface;
+using EFDataAccess.Entities;
+using System.Diagnostics;
+using Microsoft.Build.Tasks.Deployment.Bootstrapper;
+
 
 namespace Adventure.Controllers.Employee
 {
@@ -52,6 +53,8 @@ namespace Adventure.Controllers.Employee
                 catch(Exception ex)
                 {
                     _logger.LogError(ex.Message);
+
+                    return base.CreateInternalServerRequest("Pagination Data Successfully", ex.Message);
                 }
             }
 
@@ -62,5 +65,153 @@ namespace Adventure.Controllers.Employee
             });
 
         }
+
+        [HttpPost("InsertProduct")]
+        public IActionResult InsertProduct([FromBody] RequestProductModel requestProduct)
+        {
+            if (!ModelState.IsValid)
+            {
+                return base.CreateBadRequest("Validation failed", ModelState.ToDictionary(
+                       kvp => kvp.Key,
+                       kvp => kvp.Value?.Errors
+                           .Select(e => e.ErrorMessage)
+                           .ToList()
+                   ));
+            }
+
+            EFDataAccess.Entities.Product product = new EFDataAccess.Entities.Product();
+
+            if (_productMangement is not null)
+            {
+                try
+                {
+
+                    product.ProductId = requestProduct.ProductId;
+                    product.ProductNumber = requestProduct.ProductNumber;
+                    product.Name = requestProduct.Name;
+                    product.MakeFlag = requestProduct.MakeFlag;
+                    product.FinishedGoodsFlag = requestProduct.FinishedGoodsFlag;
+                    product.Color = requestProduct.Color;
+                    product.SafetyStockLevel = requestProduct.SafetyStockLevel;
+                    product.ReorderPoint = requestProduct.ReorderPoint;
+                    product.StandardCost = requestProduct.StandardCost;
+                    product.ListPrice = requestProduct.ListPrice;
+                    product.SizeUnitMeasureCode = requestProduct.SizeUnitMeasureCode;
+                    product.WeightUnitMeasureCode = requestProduct.WeightUnitMeasureCode;
+                    product.Weight = requestProduct.Weight;
+                    product.DaysToManufacture = requestProduct.DaysToManufacture;
+                    product.ProductLine = requestProduct.ProductLine;
+                    product.Class = requestProduct.Class;
+                    product.Style = requestProduct.Style;
+                    product.ProductSubcategoryId = requestProduct.ProductSubcategoryId;
+                    product.ProductModelId = requestProduct.ProductModelId;
+                    product.SellStartDate = requestProduct.SellStartDate;
+                    product.SellEndDate = requestProduct.SellEndDate;
+                    product.DiscontinuedDate = requestProduct.DiscontinuedDate;
+                    product.Rowguid = requestProduct.Rowguid;
+                    product.ModifiedDate = requestProduct.ModifiedDate;
+
+                    _productMangement.AddProductDetails(product);
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                    return base.CreateInternalServerRequest("Pagination Data Successfully", ex.Message);
+                }
+            }
+
+
+            return base.CreateOkRequest("Product Got updated successfully", new
+            {
+                Changes = product
+            });
+
+        }
+
+
+        [HttpPut("UpdateProduct")]
+        public IActionResult UpdateProduct([FromBody] RequestProductModel requestProduct)
+        {
+            if (!ModelState.IsValid)
+            {
+                return base.CreateBadRequest("Validation failed", ModelState.ToDictionary(
+                       kvp => kvp.Key,
+                       kvp => kvp.Value?.Errors
+                           .Select(e => e.ErrorMessage)
+                           .ToList()
+                   ));
+            }
+
+            EFDataAccess.Entities.Product product = new EFDataAccess.Entities.Product();
+
+            if (_productMangement is not null)
+            {
+                try
+                {
+                   
+                    product.ProductId = requestProduct.ProductId;
+                    product.ProductNumber = requestProduct.ProductNumber;
+                    product.Name = requestProduct.Name;
+                    product.MakeFlag = requestProduct.MakeFlag;
+                    product.FinishedGoodsFlag = requestProduct.FinishedGoodsFlag;
+                    product.Color = requestProduct.Color;
+                    product.SafetyStockLevel = requestProduct.SafetyStockLevel;
+                    product.ReorderPoint = requestProduct.ReorderPoint;
+                    product.StandardCost = requestProduct.StandardCost;
+                    product.ListPrice = requestProduct.ListPrice;
+                    product.SizeUnitMeasureCode =requestProduct.SizeUnitMeasureCode;
+                    product.WeightUnitMeasureCode = requestProduct.WeightUnitMeasureCode;
+                    product.Weight = requestProduct.Weight;
+                    product.DaysToManufacture = requestProduct.DaysToManufacture;
+                    product.ProductLine = requestProduct.ProductLine;
+                    product.Class = requestProduct.Class;
+                    product.Style = requestProduct.Style;
+                    product.ProductSubcategoryId = requestProduct.ProductSubcategoryId;
+                    product.ProductModelId = requestProduct.ProductModelId;
+                    product.SellStartDate = requestProduct.SellStartDate;
+                    product.SellEndDate = requestProduct.SellEndDate;
+                    product.DiscontinuedDate = requestProduct.DiscontinuedDate;
+                    product.Rowguid = requestProduct.Rowguid;
+                    product.ModifiedDate = requestProduct.ModifiedDate;
+
+                    _productMangement.UpdateProduct(product);
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                    return base.CreateInternalServerRequest("Pagination Data Successfully", ex.Message);
+                }
+            }
+
+
+            return base.CreateOkRequest("Product Got updated successfully", new
+            {
+                Changes = product
+            });
+
+        }
+
+        [HttpDelete("RemoveProduct")]
+        
+        public  IActionResult DeleteProduct(int productID)
+        {
+            try
+            {
+                _productMangement.RemoveProduct(productID);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return base.CreateInternalServerRequest("Pagination Data Successfully", ex.Message);
+            }
+
+            return base.CreateOkRequest("ProductDeleted successfully", new
+            {
+                Changes = productID
+            });
+        }
+
     }
 }

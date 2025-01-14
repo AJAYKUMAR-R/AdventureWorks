@@ -10,11 +10,11 @@ namespace EFDataAccess.EFBusinessInterface.ProductBusinessInterface
 {
     public interface  IProductBuissness
     {
-        public int AddProductDetails(Product product);
+        public void AddProductDetails(Product product);
 
-        public int UpdateProduct(Product product);
+        public void UpdateProduct(Product product);
 
-        public int RemoveProduct(int productId);
+        public void RemoveProduct(int productId);
 
         public IEnumerable<ProductModelSet> GetPaginatedProductsAsync(
             string productName,

@@ -43,7 +43,7 @@ public class IdentityController : ControllerBase
         return StatusCode(500, new ProblemDetails
         {
             Status = 500,
-            Title = "Internal Server Error",
+            Title = description,
             Detail = data
         });
 
