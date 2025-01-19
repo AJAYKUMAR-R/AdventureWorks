@@ -1,4 +1,5 @@
-﻿using EFDataAccess.EFBusinessInterface.ProductBusinessInterface;
+﻿using Adventure.Models.Product.TableFunctionResult;
+using EFDataAccess.EFBusinessInterface.ProductBusinessInterface;
 using EFDataAccess.EFDataInterface.ProductsDataInterface;
 using EFDataAccess.EFModelSet.ProductsManagement;
 using EFDataAccess.Entities;
@@ -80,5 +81,9 @@ namespace EFDataAccess.EFBusinessLogic.ProductBusinessLogic
                 throw new InvalidOperationException($"No product found with ID {product.ProductId} to update.");
         }
 
+        public IEnumerable<ProductClass> GetClass()
+        {
+            return _prodcutDataProvider.GetClass();
+        }
     }
 }

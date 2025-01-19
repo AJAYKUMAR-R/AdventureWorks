@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using EFDataAccess.Entities;
+using Adventure.Models.Product.TableFunctionResult;
 
 namespace EFDataAccess.DBContext
 {
@@ -112,6 +113,9 @@ namespace EFDataAccess.DBContext
         public virtual DbSet<Vendor> Vendors { get; set; } = null!;
         public virtual DbSet<WorkOrder> WorkOrders { get; set; } = null!;
         public virtual DbSet<WorkOrderRouting> WorkOrderRoutings { get; set; } = null!;
+
+        public DbSet<ProductClass> GetProductClass { get; set; }
+
 
         // Unable to generate entity type for table 'Production.Document' since its primary key could not be scaffolded. Please see the warning messages.
         // Unable to generate entity type for table 'Production.ProductDocument' since its primary key could not be scaffolded. Please see the warning messages.
@@ -4189,9 +4193,24 @@ namespace EFDataAccess.DBContext
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
+            //Adding the Manual code for the Invoke Table valued function
+
+             modelBuilder.Entity<ProductClass>().HasNoKey(); // TVF returns data without primary keys
+
+            // Map the TVF to a C# method
+            modelBuilder.HasDbFunction(() => fn_GetClass())
+                        .HasName("fn_GetClass") // SQL function name
+                        .HasSchema("Production"); // Schema name
+
             OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+        // Map the TVF to a C# method
+        public IQueryable<ProductClass> fn_GetClass()
+        {
+            return FromExpression(() => fn_GetClass());
+        }
     }
 }

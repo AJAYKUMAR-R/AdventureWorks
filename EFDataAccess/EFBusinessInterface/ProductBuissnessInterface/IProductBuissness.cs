@@ -1,4 +1,5 @@
-﻿using EFDataAccess.EFModelSet.ProductsManagement;
+﻿using Adventure.Models.Product.TableFunctionResult;
+using EFDataAccess.EFModelSet.ProductsManagement;
 using EFDataAccess.Entities;
 using System;
 using System.Collections.Generic;
@@ -28,5 +29,7 @@ namespace EFDataAccess.EFBusinessInterface.ProductBusinessInterface
             int pageSize,
             ref int totalRecord
             );
+
+        public IEnumerable<ProductClass> GetClass();
     }
 }

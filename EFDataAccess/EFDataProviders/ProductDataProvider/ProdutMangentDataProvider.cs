@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Data;
+using Adventure.Models.Product.TableFunctionResult;
 
 
 namespace EFDataAccess.EFDataProviders.ProductDataProvider
@@ -409,6 +410,14 @@ namespace EFDataAccess.EFDataProviders.ProductDataProvider
             catch (Exception e)
             {
                 throw e;
+            }
+        }
+
+        public IEnumerable<ProductClass> GetClass()
+        {
+            using (var context = new AdventureWorks())
+            {
+                return context.fn_GetClass().ToList();
             }
         }
     }

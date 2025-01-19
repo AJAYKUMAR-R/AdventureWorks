@@ -6,6 +6,8 @@ using EFDataAccess.EFBusinessInterface.ProductBusinessInterface;
 using EFDataAccess.Entities;
 using System.Diagnostics;
 using Microsoft.Build.Tasks.Deployment.Bootstrapper;
+using Adventure.Models.Product.TableFunctionResult;
+using Microsoft.CodeAnalysis;
 
 
 namespace Adventure.Controllers.Employee
@@ -195,8 +197,7 @@ namespace Adventure.Controllers.Employee
 
         }
 
-        [HttpDelete("RemoveProduct")]
-        
+        [HttpDelete("RemoveProduct")]      
         public  IActionResult DeleteProduct(int productID)
         {
             try
@@ -212,6 +213,16 @@ namespace Adventure.Controllers.Employee
             return base.CreateOkRequest("ProductDeleted successfully", new
             {
                 Changes = productID
+            });
+        }
+
+
+        [HttpGet("GetClass")]
+        public IActionResult GetClass()
+        {
+            return base.CreateOkRequest("ProductDeleted successfully", new
+            {
+                Changes = _productMangement.GetClass()
             });
         }
 
