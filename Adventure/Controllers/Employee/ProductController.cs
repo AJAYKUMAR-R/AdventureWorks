@@ -89,20 +89,21 @@ namespace Adventure.Controllers.Employee
                     product.ProductId = requestProduct.ProductId;
                     product.ProductNumber = requestProduct.ProductNumber;
                     product.Name = requestProduct.Name;
-                    product.MakeFlag = requestProduct.MakeFlag;
-                    product.FinishedGoodsFlag = requestProduct.FinishedGoodsFlag;
+                    product.MakeFlag = Convert.ToBoolean(requestProduct.MakeFlag.Value);
+                    product.FinishedGoodsFlag = Convert.ToBoolean(requestProduct.FinishedGoodsFlag);
                     product.Color = requestProduct.Color;
                     product.SafetyStockLevel = requestProduct.SafetyStockLevel;
                     product.ReorderPoint = requestProduct.ReorderPoint;
                     product.StandardCost = requestProduct.StandardCost;
                     product.ListPrice = requestProduct.ListPrice;
+                    product.Size = requestProduct.Size;
                     product.SizeUnitMeasureCode = requestProduct.SizeUnitMeasureCode;
                     product.WeightUnitMeasureCode = requestProduct.WeightUnitMeasureCode;
                     product.Weight = requestProduct.Weight;
                     product.DaysToManufacture = requestProduct.DaysToManufacture;
-                    product.ProductLine = requestProduct.ProductLine;
-                    product.Class = requestProduct.Class;
-                    product.Style = requestProduct.Style;
+                    product.ProductLine = requestProduct.ProductLine.ToString();
+                    product.Class = requestProduct.Class.ToString();
+                    product.Style = requestProduct.Style.ToString();
                     product.ProductSubcategoryId = requestProduct.ProductSubcategoryId;
                     product.ProductModelId = requestProduct.ProductModelId;
                     product.SellStartDate = requestProduct.SellStartDate;
@@ -117,12 +118,12 @@ namespace Adventure.Controllers.Employee
                 catch (Exception ex)
                 {
                     _logger.LogError(ex.Message);
-                    return base.CreateInternalServerRequest("Pagination Data Successfully", ex.Message);
+                    return base.CreateInternalServerRequest("Issue in inserting the product", ex.Message);
                 }
             }
 
 
-            return base.CreateOkRequest("Product Got updated successfully", new
+            return base.CreateOkRequest("Product Got Inserted successfully", new
             {
                 Changes = product
             });
@@ -153,20 +154,21 @@ namespace Adventure.Controllers.Employee
                     product.ProductId = requestProduct.ProductId;
                     product.ProductNumber = requestProduct.ProductNumber;
                     product.Name = requestProduct.Name;
-                    product.MakeFlag = requestProduct.MakeFlag;
-                    product.FinishedGoodsFlag = requestProduct.FinishedGoodsFlag;
+                    product.MakeFlag = Convert.ToBoolean(requestProduct.MakeFlag);
+                    product.FinishedGoodsFlag = Convert.ToBoolean(requestProduct.FinishedGoodsFlag);
                     product.Color = requestProduct.Color;
                     product.SafetyStockLevel = requestProduct.SafetyStockLevel;
                     product.ReorderPoint = requestProduct.ReorderPoint;
                     product.StandardCost = requestProduct.StandardCost;
+                    product.Size = requestProduct.Size;
                     product.ListPrice = requestProduct.ListPrice;
                     product.SizeUnitMeasureCode =requestProduct.SizeUnitMeasureCode;
                     product.WeightUnitMeasureCode = requestProduct.WeightUnitMeasureCode;
                     product.Weight = requestProduct.Weight;
                     product.DaysToManufacture = requestProduct.DaysToManufacture;
-                    product.ProductLine = requestProduct.ProductLine;
-                    product.Class = requestProduct.Class;
-                    product.Style = requestProduct.Style;
+                    product.ProductLine = requestProduct.ProductLine.ToString();
+                    product.Class = requestProduct.Class.ToString();
+                    product.Style = requestProduct.Style.ToString();
                     product.ProductSubcategoryId = requestProduct.ProductSubcategoryId;
                     product.ProductModelId = requestProduct.ProductModelId;
                     product.SellStartDate = requestProduct.SellStartDate;
@@ -181,7 +183,7 @@ namespace Adventure.Controllers.Employee
                 catch (Exception ex)
                 {
                     _logger.LogError(ex.Message);
-                    return base.CreateInternalServerRequest("Pagination Data Successfully", ex.Message);
+                    return base.CreateInternalServerRequest("Issue in updating the product", ex.Message);
                 }
             }
 
@@ -204,7 +206,7 @@ namespace Adventure.Controllers.Employee
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return base.CreateInternalServerRequest("Pagination Data Successfully", ex.Message);
+                return base.CreateInternalServerRequest("Issue in deleting the product", ex.Message);
             }
 
             return base.CreateOkRequest("ProductDeleted successfully", new

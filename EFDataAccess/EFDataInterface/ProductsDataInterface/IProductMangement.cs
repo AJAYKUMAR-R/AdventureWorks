@@ -14,7 +14,7 @@ namespace EFDataAccess.EFDataInterface.ProductsDataInterface
     {
         public int InsertProductDetails(Product product);
 
-        public int UpdateProductDetauks(Product product);
+        public int UpdateProductDetails(Product product);
 
         public Task<bool> DeleteProductDetails(int productId);
 

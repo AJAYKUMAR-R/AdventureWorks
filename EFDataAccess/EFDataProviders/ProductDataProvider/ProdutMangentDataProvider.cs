@@ -13,6 +13,8 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Data;
+
 
 namespace EFDataAccess.EFDataProviders.ProductDataProvider
 {
@@ -30,7 +32,7 @@ namespace EFDataAccess.EFDataProviders.ProductDataProvider
                 try
                 {
                     var product = await context.Products.FindAsync(productId);
-                    if (product is not null)
+                    if (product is null)
                     {
                         throw new InvalidOperationException("No such as product out there in the database");
                     }
@@ -147,32 +149,126 @@ namespace EFDataAccess.EFDataProviders.ProductDataProvider
                 using (var context = new AdventureWorks())
                 {
                     var parameters = new[]
-                    {
-                        new SqlParameter("@Name", product.Name),
-                        new SqlParameter("@ProductNumber", product.ProductNumber),
-                        new SqlParameter("@MakeFlag", product.MakeFlag),
-                        new SqlParameter("@FinishedGoodsFlag", product.FinishedGoodsFlag),
-                        new SqlParameter("@Color", product.Color),
-                        new SqlParameter("@SafetyStockLevel", product.SafetyStockLevel),
-                        new SqlParameter("@ReorderPoint", product.ReorderPoint),
-                        new SqlParameter("@StandardCost", product.StandardCost),
-                        new SqlParameter("@ListPrice", product.ListPrice),
-                        new SqlParameter("@Size", product.Size),
-                        new SqlParameter("@SizeUnitMeasureCode", product.SizeUnitMeasureCode),
-                        new SqlParameter("@WeightUnitMeasureCode", product.WeightUnitMeasureCode),
-                        new SqlParameter("@Weight", product.Weight),
-                        new SqlParameter("@DaysToManufacture", product.DaysToManufacture),
-                        new SqlParameter("@ProductLine", product.ProductLine),
-                        new SqlParameter("@Class", product.Class),
-                        new SqlParameter("@Style", product.Style),
-                        new SqlParameter("@ProductSubcategoryID", product.ProductSubcategoryId),
-                        new SqlParameter("@ProductModelID", product.ProductModelId),
-                        new SqlParameter("@SellStartDate", product.SellStartDate),
-                        new SqlParameter("@SellEndDate", product.SellEndDate),
-                        new SqlParameter("@DiscontinuedDate", product.DiscontinuedDate)
+                        {
+                        new SqlParameter("@Name", (object?)product.Name ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.NVarChar,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@ProductNumber", (object?)product.ProductNumber ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.NVarChar,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@MakeFlag", (object?)product.MakeFlag ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.Bit,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@FinishedGoodsFlag", (object?)product.FinishedGoodsFlag ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.Bit,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@Color", (object?)product.Color ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.NVarChar,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@SafetyStockLevel", (object?)product.SafetyStockLevel ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.SmallInt,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@ReorderPoint", (object?)product.ReorderPoint ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.SmallInt,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@StandardCost", (object?)product.StandardCost ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.Money,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@ListPrice", (object?)product.ListPrice ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.Money,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@Size", (object?)product.Size ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.NVarChar,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@SizeUnitMeasureCode", (object?)product.SizeUnitMeasureCode ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.NVarChar,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@WeightUnitMeasureCode", (object?)product.WeightUnitMeasureCode ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.NVarChar,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@Weight", (object?)product.Weight ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.Decimal,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@DaysToManufacture", (object?)product.DaysToManufacture ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.Int,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@ProductLine", (object?)product.ProductLine ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.NChar,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@Class", (object?)product.Class ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.NChar,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@Style", (object?)product.Style ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.NChar,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@ProductSubcategoryID", (object?)product.ProductSubcategoryId ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.Int,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@ProductModelID", (object?)product.ProductModelId ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.Int,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@SellStartDate", (object?)product.SellStartDate ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.DateTime,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@SellEndDate", (object?)product.SellEndDate ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.DateTime,
+                            IsNullable = true
+                        },
+                        new SqlParameter("@DiscontinuedDate", (object?)product.DiscontinuedDate ?? DBNull.Value)
+                        {
+                            SqlDbType = System.Data.SqlDbType.DateTime,
+                            IsNullable = true
+                        }
                     };
 
-                   return  context.Database.ExecuteSqlRaw("EXEC [Production].[usp_InsertProduct]  @ProductID, @Name, @ProductNumber, @MakeFlag, @FinishedGoodsFlag, @Color, @SafetyStockLevel, @ReorderPoint, @StandardCost, @ListPrice, @Size, @SizeUnitMeasureCode, @WeightUnitMeasureCode, @Weight, @DaysToManufacture, @ProductLine, @Class, @Style, @ProductSubcategoryID, @ProductModelID, @SellStartDate, @SellEndDate, @DiscontinuedDate", parameters);
+                    // Log parameters for debugging
+                    foreach (var param in parameters)
+                    {
+                        Console.WriteLine($"Parameter: {param.ParameterName}, Value: {param.Value}");
+                    }
+
+                    return  context.Database.ExecuteSqlRaw("EXEC [Production].[usp_InsertProduct]   @Name, @ProductNumber, @MakeFlag, @FinishedGoodsFlag, @Color, @SafetyStockLevel, @ReorderPoint, @StandardCost, @ListPrice, @Size, @SizeUnitMeasureCode, @WeightUnitMeasureCode, @Weight, @DaysToManufacture, @ProductLine, @Class, @Style, @ProductSubcategoryID, @ProductModelID, @SellStartDate, @SellEndDate, @DiscontinuedDate", parameters);
                 }
             }
             catch (Exception e)
@@ -182,38 +278,130 @@ namespace EFDataAccess.EFDataProviders.ProductDataProvider
 
         }
 
-        public int UpdateProductDetauks(Product product)
+        public int UpdateProductDetails(Product product)
         {
             try
             {
                 using (var context = new AdventureWorks())
                 {
                     var parameters = new[]
-                    {
-                        new SqlParameter("@ProductID", product.ProductId),
-                        new SqlParameter("@Name", product.Name),
-                        new SqlParameter("@ProductNumber", product.ProductNumber),
-                        new SqlParameter("@MakeFlag", product.MakeFlag),
-                        new SqlParameter("@FinishedGoodsFlag", product.FinishedGoodsFlag),
-                        new SqlParameter("@Color", product.Color),
-                        new SqlParameter("@SafetyStockLevel", product.SafetyStockLevel),
-                        new SqlParameter("@ReorderPoint", product.ReorderPoint),
-                        new SqlParameter("@StandardCost", product.StandardCost),
-                        new SqlParameter("@ListPrice", product.ListPrice),
-                        new SqlParameter("@Size", product.Size),
-                        new SqlParameter("@SizeUnitMeasureCode", product.SizeUnitMeasureCode),
-                        new SqlParameter("@WeightUnitMeasureCode", product.WeightUnitMeasureCode),
-                        new SqlParameter("@Weight", product.Weight),
-                        new SqlParameter("@DaysToManufacture", product.DaysToManufacture),
-                        new SqlParameter("@ProductLine", product.ProductLine),
-                        new SqlParameter("@Class", product.Class),
-                        new SqlParameter("@Style", product.Style),
-                        new SqlParameter("@ProductSubcategoryID", product.ProductSubcategoryId),
-                        new SqlParameter("@ProductModelID", product.ProductModelId),
-                        new SqlParameter("@SellStartDate", product.SellStartDate),
-                        new SqlParameter("@SellEndDate", product.SellEndDate),
-                        new SqlParameter("@DiscontinuedDate", product.DiscontinuedDate)
-                };
+                     {
+                            new SqlParameter("@ProductID", (object?)product.ProductId ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.NVarChar,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@Name", (object?)product.Name ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.NVarChar,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@ProductNumber", (object?)product.ProductNumber ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.NVarChar,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@MakeFlag", (object?)product.MakeFlag ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.Bit,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@FinishedGoodsFlag", (object?)product.FinishedGoodsFlag ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.Bit,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@Color", (object?)product.Color ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.NVarChar,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@SafetyStockLevel", (object?)product.SafetyStockLevel ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.SmallInt,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@ReorderPoint", (object?)product.ReorderPoint ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.SmallInt,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@StandardCost", (object?)product.StandardCost ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.Money,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@ListPrice", (object?)product.ListPrice ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.Money,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@Size", (object?)product.Size ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.NVarChar,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@SizeUnitMeasureCode", (object?)product.SizeUnitMeasureCode ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.NVarChar,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@WeightUnitMeasureCode", (object?)product.WeightUnitMeasureCode ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.NVarChar,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@Weight", (object?)product.Weight ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.Decimal,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@DaysToManufacture", (object?)product.DaysToManufacture ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.Int,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@ProductLine", (object?)product.ProductLine ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.NChar,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@Class", (object?)product.Class ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.NChar,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@Style", (object?)product.Style ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.NChar,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@ProductSubcategoryID", (object?)product.ProductSubcategoryId ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.Int,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@ProductModelID", (object?)product.ProductModelId ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.Int,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@SellStartDate", (object?)product.SellStartDate ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.DateTime,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@SellEndDate", (object?)product.SellEndDate ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.DateTime,
+                                IsNullable = true
+                            },
+                            new SqlParameter("@DiscontinuedDate", (object?)product.DiscontinuedDate ?? DBNull.Value)
+                            {
+                                SqlDbType = System.Data.SqlDbType.DateTime,
+                                IsNullable = true
+                            }
+                    };
 
                     return context.Database.ExecuteSqlRaw("EXEC Production.usp_UpdateProduct @ProductID, @Name, @ProductNumber, @MakeFlag, @FinishedGoodsFlag, @Color, @SafetyStockLevel, @ReorderPoint, @StandardCost, @ListPrice, @Size, @SizeUnitMeasureCode, @WeightUnitMeasureCode, @Weight, @DaysToManufacture, @ProductLine, @Class, @Style, @ProductSubcategoryID, @ProductModelID, @SellStartDate, @SellEndDate, @DiscontinuedDate", parameters);
                 }

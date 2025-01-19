@@ -74,7 +74,7 @@ namespace EFDataAccess.EFBusinessLogic.ProductBusinessLogic
             if (product == null)
                 throw new ArgumentNullException(nameof(product), "Product cannot be null.");
 
-            var affectedRows = _prodcutDataProvider.UpdateProductDetauks(product);
+            var affectedRows = _prodcutDataProvider.UpdateProductDetails(product);
 
             if (affectedRows == 0)
                 throw new InvalidOperationException($"No product found with ID {product.ProductId} to update.");
